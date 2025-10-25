@@ -3,6 +3,9 @@ import { motion } from 'framer-motion';
 import { Settings } from 'lucide-react';
 import FloatingAvatar from './components/FloatingAvatar';
 import DemoVideoPlayer from './components/DemoVideoPlayer';
+import StardustVortex from './components/StardustVortex';
+import CharacterSelector from './components/CharacterSelector';
+import { Character } from './data/characters';
 
 interface AppState {
   isActive: boolean;
@@ -15,6 +18,7 @@ interface AppState {
   overlayPosition: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
   overlayOpacity: number;
   showSettings: boolean;
+  selectedCharacter: Character;
 }
 
 function App() {
@@ -29,6 +33,7 @@ function App() {
     overlayPosition: 'bottom-right',
     overlayOpacity: 0.9,
     showSettings: false,
+    selectedCharacter: 'luna',
   });
 
   const toggleActive = () => setState(prev => ({ ...prev, isActive: !prev.isActive }));
@@ -40,6 +45,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
+      <StardustVortex />
       {/* Minimal Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-neutral-950 to-black"></div>
@@ -130,6 +136,16 @@ function App() {
                 )}
               </div>
               
+              {/* Character Selector */}
+              <div className="mt-8">
+                <CharacterSelector
+                  selectedCharacter={state.selectedCharacter}
+                  onCharacterChange={(character) =>
+                    setState((prev) => ({ ...prev, selectedCharacter: character }))
+                  }
+                />
+              </div>
+
               {/* Minimal Controls */}
               <div className="flex items-center justify-center space-x-8 mt-8">
                 <motion.button
@@ -269,6 +285,7 @@ function App() {
             isActive={state.isActive}
             position={state.overlayPosition}
             opacity={state.overlayOpacity}
+            character={state.selectedCharacter}
             onClose={() => setState(prev => ({ ...prev, isVisible: false }))}
             onPositionChange={(position) => setState(prev => ({ ...prev, overlayPosition: position }))}
           />

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Pause, Move, X } from 'lucide-react';
+import { Character, characters } from '../data/characters';
 
 interface FloatingAvatarProps {
   text: string;
@@ -10,6 +11,7 @@ interface FloatingAvatarProps {
   isActive: boolean;
   position: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
   opacity: number;
+  character: Character;
   onClose: () => void;
   onPositionChange: (position: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right') => void;
 }
@@ -22,6 +24,7 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
   isActive,
   position,
   opacity,
+  character,
   onClose,
   onPositionChange,
 }) => {
@@ -62,6 +65,9 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
     const centerX = 100;
     const centerY = 100;
     const time = Date.now() * 0.003;
+    const charData = characters[character];
+    const baseColor = charData.color;
+    const accentColor = charData.accentColor;
     
     // Minimal background
     ctx.fillStyle = 'rgba(12, 12, 12, 0.95)';
@@ -73,19 +79,19 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
     ctx.strokeRect(0, 0, 200, 200);
     
     // Minimal avatar body
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.fillStyle = baseColor + 'da';
     ctx.beginPath();
     ctx.arc(centerX, centerY - 20, 30, 0, 2 * Math.PI);
     ctx.fill();
     
     // Face
-    ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
+    ctx.fillStyle = 'rgba(12, 12, 12, 0.9)';
     ctx.beginPath();
     ctx.arc(centerX, centerY - 20, 25, 0, 2 * Math.PI);
     ctx.fill();
     
     // Eyes - minimal
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillStyle = accentColor + 'e6';
     const eyeOffset = playing ? Math.sin(time) * 1 : 0;
     ctx.beginPath();
     ctx.arc(centerX - 8 + eyeOffset, centerY - 25, 2, 0, 2 * Math.PI);
