@@ -27,7 +27,6 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
-  const [isDragging, setIsDragging] = React.useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -44,141 +43,99 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (!isActive || !text.trim()) {
-      // Draw placeholder
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      // Draw minimal placeholder
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
       ctx.font = '12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('Enter text to see sign language', canvas.width / 2, canvas.height / 2);
       return;
     }
 
-    // Draw avatar placeholder (this would be replaced with actual 3D rendering)
-    drawAvatarPlaceholder(ctx, text, isPlaying);
+    // Draw minimal avatar
+    drawMinimalAvatar(ctx, text, isPlaying);
   }, [text, signLanguage, speed, size, isActive, isPlaying]);
 
-  const drawAvatarPlaceholder = (ctx: CanvasRenderingContext2D, text: string, playing: boolean) => {
+  const drawMinimalAvatar = (ctx: CanvasRenderingContext2D, text: string, playing: boolean) => {
     const centerX = 100;
     const centerY = 100;
-    const time = Date.now() * 0.005;
+    const time = Date.now() * 0.003;
     
-    // Create gradient background
-    const gradient = ctx.createLinearGradient(0, 0, 200, 200);
-    gradient.addColorStop(0, 'rgba(15, 23, 42, 0.8)');
-    gradient.addColorStop(0.5, 'rgba(30, 41, 59, 0.8)');
-    gradient.addColorStop(1, 'rgba(51, 65, 85, 0.8)');
-    ctx.fillStyle = gradient;
+    // Minimal background
+    ctx.fillStyle = 'rgba(12, 12, 12, 0.95)';
     ctx.fillRect(0, 0, 200, 200);
     
-    // Avatar body with gradient
-    const bodyGradient = ctx.createRadialGradient(centerX, centerY - 25, 0, centerX, centerY - 25, 45);
-    bodyGradient.addColorStop(0, '#fbbf24');
-    bodyGradient.addColorStop(1, '#f59e0b');
-    ctx.fillStyle = bodyGradient;
-    ctx.beginPath();
-    ctx.arc(centerX, centerY - 25, 40, 0, 2 * Math.PI);
-    ctx.fill();
+    // Add subtle border
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0, 0, 200, 200);
     
-    // Add glow effect
-    ctx.shadowColor = '#fbbf24';
-    ctx.shadowBlur = 15;
-    ctx.fillStyle = bodyGradient;
+    // Minimal avatar body
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
     ctx.beginPath();
-    ctx.arc(centerX, centerY - 25, 40, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY - 20, 30, 0, 2 * Math.PI);
     ctx.fill();
-    ctx.shadowBlur = 0;
     
     // Face
-    const faceGradient = ctx.createRadialGradient(centerX - 5, centerY - 30, 0, centerX, centerY - 25, 30);
-    faceGradient.addColorStop(0, '#fef3c7');
-    faceGradient.addColorStop(1, '#fbbf24');
-    ctx.fillStyle = faceGradient;
+    ctx.fillStyle = 'rgba(10, 10, 10, 0.9)';
     ctx.beginPath();
-    ctx.arc(centerX, centerY - 25, 30, 0, 2 * Math.PI);
+    ctx.arc(centerX, centerY - 20, 25, 0, 2 * Math.PI);
     ctx.fill();
     
-    // Eyes with animation
-    ctx.fillStyle = '#1f2937';
+    // Eyes - minimal
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     const eyeOffset = playing ? Math.sin(time) * 1 : 0;
     ctx.beginPath();
-    ctx.arc(centerX - 10 + eyeOffset, centerY - 30, 3, 0, 2 * Math.PI);
-    ctx.arc(centerX + 10 + eyeOffset, centerY - 30, 3, 0, 2 * Math.PI);
+    ctx.arc(centerX - 8 + eyeOffset, centerY - 25, 2, 0, 2 * Math.PI);
+    ctx.arc(centerX + 8 + eyeOffset, centerY - 25, 2, 0, 2 * Math.PI);
     ctx.fill();
     
-    // Eye highlights
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(centerX - 9 + eyeOffset, centerY - 31, 1, 0, 2 * Math.PI);
-    ctx.arc(centerX + 9 + eyeOffset, centerY - 31, 1, 0, 2 * Math.PI);
-    ctx.fill();
-    
-    // Smile
-    ctx.strokeStyle = '#1f2937';
-    ctx.lineWidth = 2;
+    // Minimal smile
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    ctx.lineWidth = 1;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.arc(centerX, centerY - 20, 10, 0, Math.PI);
+    ctx.arc(centerX, centerY - 15, 8, 0, Math.PI);
     ctx.stroke();
     
-    // Arms with enhanced animation
-    const armAnimation = playing ? Math.sin(time * 2) * 8 : 0;
-    const armWave = playing ? Math.cos(time * 1.5) * 4 : 0;
+    // Arms - very subtle animation
+    const armAnimation = playing ? Math.sin(time * 1.5) * 5 : 0;
     
-    // Left arm with gradient
-    const leftArmGradient = ctx.createLinearGradient(centerX - 20, centerY - 15, centerX - 40, centerY + armAnimation);
-    leftArmGradient.addColorStop(0, '#fbbf24');
-    leftArmGradient.addColorStop(1, '#f59e0b');
-    ctx.strokeStyle = leftArmGradient;
-    ctx.lineWidth = 6;
+    // Left arm
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.lineWidth = 3;
     ctx.lineCap = 'round';
-    ctx.shadowColor = '#f59e0b';
-    ctx.shadowBlur = 5;
-    
     ctx.beginPath();
-    ctx.moveTo(centerX - 20, centerY - 15);
-    ctx.lineTo(centerX - 40 + armWave, centerY + armAnimation);
+    ctx.moveTo(centerX - 15, centerY - 10);
+    ctx.lineTo(centerX - 35, centerY + armAnimation);
     ctx.stroke();
     
-    // Right arm with gradient
-    const rightArmGradient = ctx.createLinearGradient(centerX + 20, centerY - 15, centerX + 40, centerY + armAnimation);
-    rightArmGradient.addColorStop(0, '#fbbf24');
-    rightArmGradient.addColorStop(1, '#f59e0b');
-    ctx.strokeStyle = rightArmGradient;
-    
+    // Right arm
     ctx.beginPath();
-    ctx.moveTo(centerX + 20, centerY - 15);
-    ctx.lineTo(centerX + 40 - armWave, centerY + armAnimation);
+    ctx.moveTo(centerX + 15, centerY - 10);
+    ctx.lineTo(centerX + 35, centerY + armAnimation);
     ctx.stroke();
     
-    ctx.shadowBlur = 0;
-    
-    // Hands with glow
-    ctx.shadowColor = '#f59e0b';
-    ctx.shadowBlur = 8;
-    ctx.fillStyle = '#fbbf24';
-    ctx.beginPath();
-    ctx.arc(centerX - 40 + armWave, centerY + armAnimation, 8, 0, 2 * Math.PI);
-    ctx.arc(centerX + 40 - armWave, centerY + armAnimation, 8, 0, 2 * Math.PI);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    
-    // Language indicator
+    // Hands
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = 'bold 10px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(signLanguage, centerX, centerY + 45);
+    ctx.beginPath();
+    ctx.arc(centerX - 35, centerY + armAnimation, 4, 0, 2 * Math.PI);
+    ctx.arc(centerX + 35, centerY + armAnimation, 4, 0, 2 * Math.PI);
+    ctx.fill();
     
-    // Current text (truncated)
-    const displayText = text.length > 15 ? text.substring(0, 15) + '...' : text;
-    const textGradient = ctx.createLinearGradient(centerX - 50, centerY + 55, centerX + 50, centerY + 55);
-    textGradient.addColorStop(0, '#06b6d4');
-    textGradient.addColorStop(0.5, '#8b5cf6');
-    textGradient.addColorStop(1, '#ec4899');
-    ctx.fillStyle = textGradient;
+    // Language indicator - minimal
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    ctx.font = '10px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(signLanguage, centerX, centerY + 40);
+    
+    // Text - minimal
+    const displayText = text.length > 20 ? text.substring(0, 20) + '...' : text;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.font = '8px Inter, sans-serif';
-    ctx.fillText(displayText, centerX, centerY + 65);
+    ctx.fillText(displayText, centerX, centerY + 55);
   };
 
   const togglePlayback = () => {
@@ -190,15 +147,15 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
   const getPositionClasses = () => {
     switch (position) {
       case 'bottom-left':
-        return 'bottom-4 left-4';
+        return 'bottom-8 left-8';
       case 'bottom-right':
-        return 'bottom-4 right-4';
+        return 'bottom-8 right-8';
       case 'top-left':
-        return 'top-4 left-4';
+        return 'top-8 left-8';
       case 'top-right':
-        return 'top-4 right-4';
+        return 'top-8 right-8';
       default:
-        return 'bottom-4 right-4';
+        return 'bottom-8 right-8';
     }
   };
 
@@ -216,62 +173,62 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: opacity, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       className={`fixed ${getPositionClasses()} z-50`}
       style={{ width: `${size}px`, height: `${size}px` }}
     >
       <div className="relative group">
-        {/* Main Avatar Container */}
+        {/* Minimal Avatar Container */}
         <motion.div
-          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 shadow-2xl"
+          className="relative overflow-hidden bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg"
           style={{ width: `${size}px`, height: `${size}px` }}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.02 }}
           transition={{ duration: 0.3 }}
         >
           <canvas
             ref={canvasRef}
-            className="w-full h-full rounded-2xl"
+            className="w-full h-full"
             style={{ width: `${size}px`, height: `${size}px` }}
           />
           
-          {/* Play/Pause Button */}
+          {/* Minimal Play/Pause Button */}
           {isActive && text.trim() && (
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              whileHover={{ scale: 1.1, rotate: 5 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={togglePlayback}
-              className="absolute top-2 right-2 p-2 bg-white/20 backdrop-blur-lg rounded-xl shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 border border-white/30"
+              className="absolute top-2 right-2 p-1 bg-white/10 backdrop-blur-sm rounded-full shadow-sm hover:shadow-md transition-all duration-300"
             >
-              {isPlaying ? <Pause size={16} className="text-white" /> : <Play size={16} className="text-white" />}
+              {isPlaying ? <Pause size={12} className="text-white" /> : <Play size={12} className="text-white" />}
             </motion.button>
           )}
         </motion.div>
 
-        {/* Control Panel - Shows on Hover */}
+        {/* Minimal Control Panel - Shows on Hover */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-lg rounded-xl p-3 shadow-2xl border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-sm rounded-sm p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white"
         >
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             {/* Position Controls */}
             <div className="flex space-x-1">
               {positions.map((pos) => (
                 <button
                   key={pos.key}
                   onClick={() => onPositionChange(pos.key)}
-                  className={`p-1 rounded ${
+                  className={`p-1 rounded text-xs ${
                     position === pos.key 
-                      ? 'bg-cyan-500 text-white' 
-                      : 'bg-white/10 text-white/70 hover:bg-white/20'
+                      ? 'bg-gray-800 text-white' 
+                      : 'text-white hover:bg-white/10'
                   }`}
                   title={pos.label}
                 >
-                  <Move size={12} />
+                  <Move size={10} />
                 </button>
               ))}
             </div>
@@ -279,10 +236,10 @@ const FloatingAvatar: React.FC<FloatingAvatarProps> = ({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="p-1 rounded bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+              className="p-1 rounded text-white hover:bg-white/10 transition-colors"
               title="Close Overlay"
             >
-              <X size={12} />
+              <X size={10} />
             </button>
           </div>
         </motion.div>
